@@ -98,13 +98,7 @@ $ cd rentx
 $ cd frontend
 $ npm install
 
-# Run the application in development mode if using Expo Go
-$ npm run dev
-# The app will create a QR code that you can read in Expo Go app to run in your mobile device.
-
-OR
-
-# Open a new terminal and start the emulator
+# Start the emulator
 $ npm run android
 
 
