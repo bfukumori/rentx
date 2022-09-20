@@ -30,12 +30,15 @@ import { Button } from "../../components/Button";
 import { useSync } from "../../hooks/sync";
 
 export function Profile({ navigation }: TabScreenProps<"ProfileTab">) {
-  const { user, signOut, updateUser } = useAuth();
+  const { user, signOut, updateUser, updatePassword } = useAuth();
   const { isOnline } = useSync();
   const [option, setOption] = useState<"dataEdit" | "passwordEdit">("dataEdit");
   const [avatar, setAvatar] = useState(user.avatar);
   const [name, setName] = useState(user.name);
   const [driverLicense, setDriverLicense] = useState(user.driver_license);
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassord] = useState("");
+  const [newPasswordRepeat, setNewPassordRepeat] = useState("");
 
   const { colors } = useTheme();
 
@@ -112,6 +115,29 @@ export function Profile({ navigation }: TabScreenProps<"ProfileTab">) {
     );
   }
 
+  async function handlePasswordUpdate() {
+    try {
+      const schema = yup.object().shape({
+        oldPassword: yup.string().required("Campo obrigatório"),
+        newPassword: yup.string().required("Digite uma nova senha"),
+        newPasswordRepeat: yup
+          .string()
+          .oneOf([yup.ref("newPassword"), null], "Valores não são iguais")
+          .required("Campo obrigatório"),
+      });
+      const data = { oldPassword, newPassword, newPasswordRepeat };
+      await schema.validate(data);
+      await updatePassword(oldPassword, newPassword);
+      Alert.alert("Senha atualizada");
+    } catch (error) {
+      if (error instanceof yup.ValidationError) {
+        Alert.alert("Opa", error.message);
+      } else {
+        Alert.alert("Não foi possível alterar a senha");
+      }
+    }
+  }
+
   return (
     <KeyboardAvoidingView behavior="position" enabled>
       <TouchableWithoutFeedback onPressIn={Keyboard.dismiss}>
@@ -173,12 +199,37 @@ export function Profile({ navigation }: TabScreenProps<"ProfileTab">) {
               </Section>
             ) : (
               <Section>
-                <Input iconName="lock" placeholder="Senha atual" isPassword />
-                <Input iconName="lock" placeholder="Nova senha" isPassword />
-                <Input iconName="lock" placeholder="Repetir senha" isPassword />
+                <Input
+                  iconName="lock"
+                  placeholder="Senha atual"
+                  isPassword
+                  onChangeText={setOldPassword}
+                  value={oldPassword}
+                />
+                <Input
+                  iconName="lock"
+                  placeholder="Nova senha"
+                  isPassword
+                  onChangeText={setNewPassord}
+                  value={newPassword}
+                />
+                <Input
+                  iconName="lock"
+                  placeholder="Repetir senha"
+                  isPassword
+                  onChangeText={setNewPassordRepeat}
+                  value={newPasswordRepeat}
+                />
               </Section>
             )}
-            <Button title="Salvar alterações" onPress={handleProfileUpdate} />
+            <Button
+              title="Salvar alterações"
+              onPress={
+                option === "dataEdit"
+                  ? handleProfileUpdate
+                  : handlePasswordUpdate
+              }
+            />
           </Content>
         </Container>
       </TouchableWithoutFeedback>

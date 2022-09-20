@@ -29,6 +29,7 @@ interface AuthContextData {
   signIn: (credentials: SignInCredentials) => Promise<void>;
   signOut: () => Promise<void>;
   updateUser: (user: User) => Promise<void>;
+  updatePassword: (oldPassword: string, password: string) => Promise<void>;
   loading: boolean;
 }
 
@@ -102,6 +103,14 @@ function AuthProvider({ children }: AuthProviderProps) {
       throw new Error(error);
     }
   }
+  async function updatePassword(old_password: string, password: string) {
+    try {
+      const updatedPassword = { old_password, password };
+      api.put("users", updatedPassword);
+    } catch (error: any) {
+      throw new Error(error);
+    }
+  }
 
   useEffect(() => {
     async function loadUserData() {
@@ -120,7 +129,14 @@ function AuthProvider({ children }: AuthProviderProps) {
 
   return (
     <AuthContext.Provider
-      value={{ user: data, signIn, signOut, updateUser, loading }}
+      value={{
+        user: data,
+        signIn,
+        signOut,
+        updateUser,
+        loading,
+        updatePassword,
+      }}
     >
       {children}
     </AuthContext.Provider>

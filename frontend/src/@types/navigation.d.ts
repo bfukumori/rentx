@@ -33,11 +33,10 @@ export type TabParamList = {
   ProfileTab: undefined;
 };
 
-export type StackScreenProps<T extends keyof TabParamList> =
-  CompositeScreenProps<
-    BottomTabScreenProps<TabParamList, T>,
-    RootStackScreenProps<keyof RootStackParamList>
-  >;
+export type TabScreenProps<T extends keyof TabParamList> = CompositeScreenProps<
+  BottomTabScreenProps<TabParamList, T>,
+  RootStackScreenProps<keyof RootStackParamList>
+>;
 
 declare global {
   namespace ReactNavigation {
