@@ -50,7 +50,7 @@
 - [x] Rent a car by period
 - [x] List user's rented cars
 - [x] Update user profile
-- [ ] Update user password
+- [x] Update user password
 - [x] Offline first features
 
 ---
