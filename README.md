@@ -49,8 +49,8 @@
 - [x] List available cars for rent
 - [x] Rent a car by period
 - [x] List user's rented cars
-- [x] CRUD operations for user
-- [ ] CRUD operations for cars
+- [x] Update user profile
+- [ ] Update user password
 - [x] Offline first features
 
 ---
