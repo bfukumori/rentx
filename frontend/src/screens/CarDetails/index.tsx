@@ -1,11 +1,7 @@
-import React from "react";
-import Animated, {
-  useSharedValue,
-  useAnimatedScrollHandler,
-  useAnimatedStyle,
-  interpolate,
-  Extrapolate,
-} from "react-native-reanimated";
+import { useEffect, useState } from "react";
+import { StatusBar } from "react-native";
+import { getStatusBarHeight } from "react-native-iphone-x-helper";
+import Animated from "react-native-reanimated";
 
 import { Accessory } from "../../components/Accessory";
 import { BackButton } from "../../components/BackButton";
@@ -13,7 +9,12 @@ import { ImageSlider } from "../../components/ImageSlider";
 import { Button } from "../../components/Button";
 
 import { getAccessoryIcon } from "../../utils/getAccessoryIcon";
+import api from "../../services/api";
 import { RootStackScreenProps } from "../../@types/navigation";
+import { CarDTO } from "../../dtos/CarDTO";
+
+import { useSync } from "../../hooks/sync";
+import { useAnimationsStyles } from "./animationsStyles";
 
 import {
   Container,
@@ -28,35 +29,18 @@ import {
   About,
   Accessories,
   Footer,
+  OfflineInfo,
 } from "./styles";
-import { getStatusBarHeight } from "react-native-iphone-x-helper";
-import { StatusBar } from "react-native";
 
 export function CarDetails({
   route,
   navigation,
 }: RootStackScreenProps<"CarDetails">) {
+  const [carUpdated, setCarUpdated] = useState<CarDTO>({} as CarDTO);
   const { car } = route.params;
-  const scrollY = useSharedValue(0);
-  const scrollHandler = useAnimatedScrollHandler((event) => {
-    scrollY.value = event.contentOffset.y;
-  });
-  const headerStyleAnimation = useAnimatedStyle(() => {
-    return {
-      height: interpolate(
-        scrollY.value,
-        [0, 200],
-        [200, 80],
-        Extrapolate.CLAMP
-      ),
-    };
-  });
-
-  const sliderCarsStyleAnimation = useAnimatedStyle(() => {
-    return {
-      opacity: interpolate(scrollY.value, [0, 150], [1, 0], Extrapolate.CLAMP),
-    };
-  });
+  const { headerStyleAnimation, scrollHandler, sliderCarsStyleAnimation } =
+    useAnimationsStyles();
+  const { isOnline } = useSync();
 
   function handleConfirmRental() {
     navigation.navigate("Scheduling", { car });
@@ -64,6 +48,17 @@ export function CarDetails({
   function handleGoBack() {
     navigation.goBack();
   }
+
+  async function fetchCarUpdated() {
+    const response = await api.get(`cars/${car.id}`);
+    setCarUpdated(response.data);
+  }
+
+  useEffect(() => {
+    if (isOnline) {
+      fetchCarUpdated();
+    }
+  }, [isOnline]);
 
   return (
     <Container>
@@ -83,7 +78,13 @@ export function CarDetails({
             { marginTop: getStatusBarHeight() + 32 },
           ]}
         >
-          <ImageSlider imagesUrl={car.photos} />
+          <ImageSlider
+            imagesUrl={
+              !!carUpdated.photos
+                ? carUpdated.photos
+                : [{ id: car.thumbnail, photo: car.thumbnail }]
+            }
+          />
         </Animated.View>
       </Animated.View>
       <Animated.ScrollView
@@ -102,30 +103,34 @@ export function CarDetails({
           </Description>
           <Rent>
             <Period>{car.period}</Period>
-            <Price>{`R$ ${car.price}`}</Price>
+            <Price>{`R$ ${isOnline ? car.price : "..."}`}</Price>
           </Rent>
         </Details>
-        <Accessories>
-          {car.accessories.map((accessory) => (
-            <Accessory
-              key={accessory.type}
-              name={accessory.name}
-              icon={getAccessoryIcon(accessory.type)}
-            />
-          ))}
-        </Accessories>
-        <About>
-          {car.about}
-          {car.about}
-          {car.about}
-          {car.about}
-          {car.about}
-          {car.about}
-          {car.about}
-        </About>
+        {carUpdated.accessories && (
+          <Accessories>
+            {carUpdated.accessories.map((accessory) => (
+              <Accessory
+                key={accessory.type}
+                name={accessory.name}
+                icon={getAccessoryIcon(accessory.type)}
+              />
+            ))}
+          </Accessories>
+        )}
+
+        <About>{car.about}</About>
       </Animated.ScrollView>
       <Footer>
-        <Button title="Confirmar" onPress={handleConfirmRental} />
+        <Button
+          title="Confirmar"
+          onPress={handleConfirmRental}
+          enabled={isOnline}
+        />
+        {!isOnline && (
+          <OfflineInfo>
+            Conecte-se à internet para ver mais detalhes e agendar seu carro
+          </OfflineInfo>
+        )}
       </Footer>
     </Container>
   );

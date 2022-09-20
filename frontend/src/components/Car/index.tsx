@@ -1,7 +1,7 @@
 import React from "react";
 import { RectButtonProps } from "react-native-gesture-handler";
+import FastImage from "react-native-fast-image";
 
-import { CarDTO } from "../../dtos/CarDTO";
 import { getAccessoryIcon } from "../../utils/getAccessoryIcon";
 
 import {
@@ -14,15 +14,17 @@ import {
   Period,
   Price,
   Type,
-  CarImage,
 } from "./styles";
+import { useSync } from "../../hooks/sync";
+import { Car as CarModel } from "../../database/models/Car";
 
 interface Props extends RectButtonProps {
-  data: CarDTO;
+  data: CarModel;
 }
 
 export function Car({ data, ...rest }: Props) {
   const MotorIcon = getAccessoryIcon(data.fuel_type);
+  const { isOnline } = useSync();
   return (
     <Container {...rest}>
       <Details>
@@ -31,14 +33,18 @@ export function Car({ data, ...rest }: Props) {
         <About>
           <Rent>
             <Period>{data.period}</Period>
-            <Price>{`R$ ${data.price}`}</Price>
+            <Price>{`R$ ${isOnline ? data.price : "..."}`}</Price>
           </Rent>
           <Type>
             <MotorIcon />
           </Type>
         </About>
       </Details>
-      <CarImage source={{ uri: data.thumbnail }} resizeMode="contain" />
+      <FastImage
+        source={{ uri: data.thumbnail }}
+        resizeMode={FastImage.resizeMode.contain}
+        style={{ width: 167, height: 85 }}
+      />
     </Container>
   );
 }

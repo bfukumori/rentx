@@ -3,7 +3,6 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Platform } from "react-native";
 import { useTheme } from "styled-components/native";
 
-import { Home } from "../screens/Home";
 import { MyCars } from "../screens/MyCars";
 import { StackRoutes } from "./app.stack.routes";
 import { TabParamList } from "../@types/navigation";
@@ -43,8 +42,8 @@ export function TabRoutes() {
         }}
       />
       <Screen
-        name="ProfileTab"
-        component={Profile}
+        name="MyCarsTab"
+        component={MyCars}
         options={{
           tabBarIcon: ({ color }) => (
             <CarSvg width={24} height={24} color={color} />
@@ -52,8 +51,8 @@ export function TabRoutes() {
         }}
       />
       <Screen
-        name="MyCarsTab"
-        component={MyCars}
+        name="ProfileTab"
+        component={Profile}
         options={{
           tabBarIcon: ({ color }) => (
             <PeopleSvg width={24} height={24} color={color} />

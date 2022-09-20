@@ -1,40 +1,36 @@
-import React, { useEffect, useState } from "react";
-import { StatusBar } from "react-native";
+import React, { useEffect } from "react";
+import { StatusBar, LogBox } from "react-native";
+LogBox.ignoreLogs([
+  "Non-serializable values were found in the navigation state",
+]);
 import { RFValue } from "react-native-responsive-fontsize";
 
 import { RootStackScreenProps } from "../../@types/navigation";
 
-import { Car } from "../../components/Car";
-import { LoadingAnimation } from "../../components/LoadingAnimation";
 import Logo from "../../assets/logo.svg";
 
-import { CarDTO } from "../../dtos/CarDTO";
-import api from "../../services/api";
+import { useCar } from "../../hooks/car";
+import { useSync } from "../../hooks/sync";
+
+import { Car } from "../../components/Car";
+import { LoadingAnimation } from "../../components/LoadingAnimation";
 
 import { CarList, Container, Header, HeaderContent, TotalCars } from "./styles";
+import { Car as CarModel } from "../../database/models/Car";
 
 export function Home({ navigation }: RootStackScreenProps<"Home">) {
-  const [cars, setCars] = useState<CarDTO[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { cars, loading } = useCar();
+  const { isOnline, offlineSynchronize } = useSync();
 
-  function handleCarDetails(car: CarDTO) {
-    navigation.navigate("CarDetails", { car });
-  }
-
-  async function fetchCars() {
-    try {
-      const response = await api.get("/cars");
-      setCars(response.data);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
+  function handleCarDetails(car: CarModel) {
+    navigation.navigate("CarDetails", {
+      car,
+    });
   }
 
   useEffect(() => {
-    fetchCars();
-  }, []);
+    offlineSynchronize();
+  }, [isOnline]);
 
   return (
     <Container>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Alert, FlatList, StatusBar } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
 
 import { useTheme } from "styled-components/native";
@@ -8,7 +8,6 @@ import { BackButton } from "../../components/BackButton";
 import { Car } from "../../components/Car";
 import { Loading } from "../../components/Loading";
 
-import { CarDTO } from "../../dtos/CarDTO";
 import api from "../../services/api";
 
 import {
@@ -26,19 +25,22 @@ import {
   CarFooterPeriod,
   CarFooterDate,
 } from "./styles";
+import { Car as CarModel } from "../../database/models/Car";
+import { format, parseISO } from "date-fns";
 
 interface CarProps {
-  car: CarDTO;
+  car: CarModel;
   user_id: string;
   id: string;
-  startDate: string;
-  endDate: string;
+  start_date: string;
+  end_date: string;
 }
 
 export function MyCars() {
   const [cars, setCars] = useState<CarProps[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const screenIsFocus = useIsFocused();
   const { colors } = useTheme();
   const navigation = useNavigation();
 
@@ -48,7 +50,7 @@ export function MyCars() {
 
   async function fetchCars() {
     try {
-      const response = await api.get("/schedules_byuser?user_id=1");
+      const response = await api.get("rentals");
       setCars(response.data);
     } catch (error) {
       Alert.alert("Não foi possível carregar a lista de carros.");
@@ -59,7 +61,7 @@ export function MyCars() {
 
   useEffect(() => {
     fetchCars();
-  }, []);
+  }, [screenIsFocus]);
   return (
     <Container>
       <Header>
@@ -94,14 +96,18 @@ export function MyCars() {
                 <CarFooter>
                   <CarFooterTitle>Período</CarFooterTitle>
                   <CarFooterPeriod>
-                    <CarFooterDate>{item.startDate}</CarFooterDate>
+                    <CarFooterDate>
+                      {format(parseISO(item.start_date), "dd/MM/yyyy")}
+                    </CarFooterDate>
                     <AntDesign
                       name="arrowright"
                       size={20}
                       color={colors.title}
                       style={{ marginHorizontal: 10 }}
                     />
-                    <CarFooterDate>{item.endDate}</CarFooterDate>
+                    <CarFooterDate>
+                      {format(parseISO(item.end_date), "dd/MM/yyyy")}
+                    </CarFooterDate>
                   </CarFooterPeriod>
                 </CarFooter>
               </CarWrapper>

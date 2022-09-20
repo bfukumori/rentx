@@ -23,7 +23,7 @@ import {
 export function FirstStep({ navigation }: RootStackScreenProps<"FirstStep">) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [drivingLicense, setDrivingLicense] = useState("");
+  const [driverLicense, setDriverLicense] = useState("");
 
   function handleGoBack() {
     navigation.goBack();
@@ -32,14 +32,14 @@ export function FirstStep({ navigation }: RootStackScreenProps<"FirstStep">) {
   async function handleNextStep() {
     try {
       const schema = yup.object().shape({
-        drivingLicense: yup.string().required("CNH é obrigatória"),
+        driverLicense: yup.string().required("CNH é obrigatória"),
         email: yup
           .string()
           .required("E-mail obrigatório")
           .email("Digite um e-mail válido"),
         name: yup.string().required("Nome obrigatório"),
       });
-      const data = { name, email, drivingLicense };
+      const data = { name, email, driverLicense };
       await schema.validate(data);
 
       navigation.navigate("SecondStep", { user: data });
@@ -82,8 +82,8 @@ export function FirstStep({ navigation }: RootStackScreenProps<"FirstStep">) {
               iconName="credit-card"
               placeholder="CNH"
               keyboardType="numeric"
-              value={drivingLicense}
-              onChangeText={setDrivingLicense}
+              value={driverLicense}
+              onChangeText={setDriverLicense}
             />
           </Form>
           <Button title="Próximo" onPress={handleNextStep} />

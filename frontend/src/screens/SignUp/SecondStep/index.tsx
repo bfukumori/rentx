@@ -48,7 +48,7 @@ export function SecondStep({
       await api.post("/users", {
         name: user.name,
         email: user.email,
-        driver_license: user.drivingLicense,
+        driver_license: user.driverLicense,
         password,
       });
 

@@ -1,6 +1,6 @@
 import { inject, injectable } from "tsyringe";
 import { sign } from "jsonwebtoken";
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt";
 import { AppError } from "@shared/errors/AppError";
 import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepository";
 
@@ -36,7 +36,7 @@ class AuthenticateUserUseCase {
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) {
-       throw new Error("Email or password incorret!");
+      throw new Error("Email or password incorret!");
     }
 
     const token = sign({}, "2e247e2eb505c42b362e80ed4d05b078", {
@@ -51,7 +51,7 @@ class AuthenticateUserUseCase {
         name: user.name,
         email: user.email,
         driver_license: user.driver_license,
-        avatar: user.avatar
+        avatar: user.avatar,
       },
     };
 

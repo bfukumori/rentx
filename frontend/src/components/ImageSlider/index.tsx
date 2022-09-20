@@ -1,7 +1,8 @@
 import React, { useRef, useState } from "react";
 import { FlatList, ViewToken } from "react-native";
+import FastImage from "react-native-fast-image";
 import { Bullet } from "../Bullet";
-import { Container, ImageIndexes, CarImageWrapper, CarImage } from "./styles";
+import { Container, ImageIndexes, CarImageWrapper } from "./styles";
 
 interface Props {
   imagesUrl: {
@@ -34,7 +35,11 @@ export function ImageSlider({ imagesUrl }: Props) {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <CarImageWrapper>
-            <CarImage source={{ uri: item.photo }} resizeMode="contain" />
+            <FastImage
+              source={{ uri: item.photo }}
+              resizeMode={FastImage.resizeMode.contain}
+              style={{ width: 280, height: 132 }}
+            />
           </CarImageWrapper>
         )}
         horizontal
