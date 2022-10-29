@@ -1,23 +1,23 @@
-import React, { useCallback } from "react";
-import { View } from "react-native";
-import * as SplashScreen from "expo-splash-screen";
-import { ThemeProvider } from "styled-components";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import React, { useCallback } from 'react';
+import { View } from 'react-native';
+import * as SplashScreen from 'expo-splash-screen';
+import { ThemeProvider } from 'styled-components';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {
   useFonts,
   Inter_400Regular,
   Inter_500Medium,
-} from "@expo-google-fonts/inter";
+} from '@expo-google-fonts/inter';
 import {
   Archivo_400Regular,
   Archivo_500Medium,
   Archivo_600SemiBold,
-} from "@expo-google-fonts/archivo";
+} from '@expo-google-fonts/archivo';
 
-import theme from "./src/styles/theme";
+import theme from './src/styles/theme';
 
-import { Routes } from "./src/routes";
-import { AppProvider } from "./src/hooks";
+import { Routes } from './src/routes';
+import { AppProvider } from './src/hooks';
 
 SplashScreen.preventAutoHideAsync();
 

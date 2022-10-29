@@ -4,10 +4,10 @@ import {
   useContext,
   useEffect,
   useState,
-} from "react";
+} from 'react';
 
-import { Car } from "../database/models/Car";
-import { database } from "../database";
+import { Car } from '../database/models/Car';
+import { database } from '../database';
 
 interface CarContextData {
   cars: Car[];
@@ -21,11 +21,11 @@ const CarContext = createContext<CarContextData>({} as CarContextData);
 
 function CarProvider({ children }: CarProviderProps) {
   const [cars, setCars] = useState<Car[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   async function fetchCars() {
     try {
-      const cars = await database.get<Car>("cars").query().fetch();
+      const cars = await database.get<Car>('cars').query().fetch();
       setCars(cars);
     } catch (error) {
     } finally {

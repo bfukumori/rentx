@@ -1,19 +1,19 @@
-import React from "react";
-import { StatusBar, useWindowDimensions } from "react-native";
+import React from 'react';
+import { StatusBar, useWindowDimensions } from 'react-native';
 
-import LogoSvg from "../../assets/logo_background_gray.svg";
-import DoneSvg from "../../assets/done.svg";
+import LogoSvg from '../../assets/logo_background_gray.svg';
+import DoneSvg from '../../assets/done.svg';
 
-import { ConfirmButton } from "../../components/ConfirmButton";
+import { ConfirmButton } from '../../components/ConfirmButton';
 
-import { RootStackScreenProps } from "../../@types/navigation";
+import { RootStackScreenProps } from '../../@types/navigation';
 
-import { Container, Content, Title, Message, Footer } from "./styles";
+import { Container, Content, Title, Message, Footer } from './styles';
 
 export function Confirmation({
   navigation,
   route,
-}: RootStackScreenProps<"Confirmation">) {
+}: RootStackScreenProps<'Confirmation'>) {
   const { width } = useWindowDimensions();
   const { title, message, nextScreenRoute } = route.params;
 
@@ -24,9 +24,9 @@ export function Confirmation({
   return (
     <Container>
       <StatusBar
-        barStyle="light-content"
+        barStyle='light-content'
         translucent
-        backgroundColor="transparent"
+        backgroundColor='transparent'
       />
       <LogoSvg width={width} />
       <Content>
@@ -35,7 +35,7 @@ export function Confirmation({
         <Message>{message}</Message>
       </Content>
       <Footer>
-        <ConfirmButton title="OK" onPress={handleConfirm} />
+        <ConfirmButton title='OK' onPress={handleConfirm} />
       </Footer>
     </Container>
   );

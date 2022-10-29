@@ -4,10 +4,10 @@ import React, {
   useContext,
   useEffect,
   useState,
-} from "react";
-import { database } from "../database";
-import api from "../services/api";
-import { User as ModelUser } from "../database/models/User";
+} from 'react';
+import { database } from '../database';
+import api from '../services/api';
+import { User as ModelUser } from '../database/models/User';
 
 interface User {
   id: string;
@@ -41,21 +41,21 @@ const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
 function AuthProvider({ children }: AuthProviderProps) {
   const [data, setData] = useState<User>({} as User);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   async function signIn({ email, password }: SignInCredentials) {
     try {
-      const response = await api.post("/sessions", {
+      const response = await api.post('/sessions', {
         email,
         password,
       });
 
       const { token, user } = response.data;
-      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
       await database.write(async () => {
         const dataUser = await database
-          .get<ModelUser>("users")
+          .get<ModelUser>('users')
           .create((newUser) => {
             newUser.user_id = user.id;
             newUser.name = user.name;
@@ -76,7 +76,7 @@ function AuthProvider({ children }: AuthProviderProps) {
     try {
       await database.write(async () => {
         const userSelected = await database
-          .get<ModelUser>("users")
+          .get<ModelUser>('users')
           .find(data.id);
         await userSelected.destroyPermanently();
       });
@@ -90,7 +90,7 @@ function AuthProvider({ children }: AuthProviderProps) {
     try {
       await database.write(async () => {
         const userSelected = await database
-          .get<ModelUser>("users")
+          .get<ModelUser>('users')
           .find(user.id);
         await userSelected.update((userData) => {
           userData.name = user.name;
@@ -106,7 +106,7 @@ function AuthProvider({ children }: AuthProviderProps) {
   async function updatePassword(old_password: string, password: string) {
     try {
       const updatedPassword = { old_password, password };
-      api.put("users", updatedPassword);
+      api.put('users', updatedPassword);
     } catch (error: any) {
       throw new Error(error);
     }
@@ -114,11 +114,11 @@ function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
     async function loadUserData() {
-      const users = await database.get<ModelUser>("users").query().fetch();
+      const users = await database.get<ModelUser>('users').query().fetch();
       if (users.length > 0) {
         const userData = users[0]._raw as unknown as ModelUser;
         api.defaults.headers.common[
-          "Authorization"
+          'Authorization'
         ] = `Bearer ${userData.token}`;
         setData(userData);
         setLoading(false);
